@@ -20,7 +20,7 @@ jobs:
       name: Check if release with version and prelease flag
       runs-on: ubuntu-latest
       outputs:
-        is_rel_matched: ${{ steps.check-rel-flag.outputs.matched }}   
+        matched: ${{ steps.check-rel-flag.outputs.matched }}   
       steps:
         - run: echo "${{inputs.version}} ${{inputs.prelease}}"
         - name: Checking version ${{inputs.version}} if matching
@@ -59,14 +59,14 @@ jobs:
       needs: check
       name: 📢Deploy to external repository with release version
       runs-on: ubuntu-lastest
-      # if: ${{needs.check.outputs.is_rel_matched}}
+      if: ${{needs.check.outputs.matched}}
       steps:
-         - run: echo "Publish to external with version ${{inputs.prelease}} - ${{needs.check.outputs.is_rel_matched}}"
+         - run: echo "Publish to external with version ${{inputs.prelease}} - ${{needs.check.outputs.matched}}"
 
     deploy-to-internal-repository:
       needs: check
       name: 🥽Deploy to internal repository with snapshot version
       runs-on: ubuntu-lastest
-      # if: ${{ ! needs.check.outputs.is_rel_matched }}
+      if: ${{ ! needs.check.outputs.matched }}
       steps:
          - run: echo "Publish to internal with version ${{inputs.prelease}}"
