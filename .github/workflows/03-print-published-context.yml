@@ -50,18 +50,18 @@ jobs:
           cat $GITHUB_OUTPUT
 
   deploy_to_external_repository:
-    name: 🎉Deploy to external repository with release version🚀
+    name: 🎉Release version will be deployed to external repository🚀
     runs-on: ubuntu-latest
     needs: check_if_release_version
-    if: ${{ needs.check_if_release_version.outputs.matched }}
+    if: ${{ needs.check_if_release_version.outputs.matched == 'true' }}
     steps:
         - run: echo "Publish to external with version with release versoin"
 
   deploy_to_internal_repository:
     runs-on: ubuntu-latest
     needs: check_if_release_version
-    name: 🎬Deploy to internal repository with snapshot version⏰
-    if: ${{ ! needs.check_if_release_version.outputs.matched }}
+    name: 🎬Snapshot version will be deployed to internal repository⏰
+    if: ${{ needs.check_if_release_version.outputs.matched == 'false' }}
     steps:
         - run: echo "Publish to internal with snapshot version "
       

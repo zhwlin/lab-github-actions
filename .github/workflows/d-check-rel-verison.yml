@@ -73,7 +73,7 @@ jobs:
       name: 🎉Deploy to external repository with release version🚀
       runs-on: ubuntu-latest
       needs: Check-If-Release-Version
-      if: ${{ needs.Check-If-Release-Version.outputs.matched }}
+      if: ${{  needs.check_if_release_version.outputs.matched == 'true'  }}
       steps:
          - run: echo "Publish to external with version with release versoin"
 
@@ -81,6 +81,6 @@ jobs:
       runs-on: ubuntu-latest
       needs: Check-If-Release-Version
       name: 🎬Deploy to internal repository with snapshot version⏰
-      if: ${{ ! needs.Check-If-Release-Version.outputs.matched }}
+      if: ${{  needs.check_if_release_version.outputs.matched == 'false'  }}
       steps:
          - run: echo "Publish to internal with snapshot version "
