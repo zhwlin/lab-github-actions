@@ -3,6 +3,7 @@ on: [push]
 
 jobs:
     print_context:
+      name: ${{github.actor}} shows event json
       runs-on: ubuntu-latest
       steps:
         - env:
