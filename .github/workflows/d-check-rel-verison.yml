@@ -20,7 +20,7 @@ jobs:
       name: Check if release with version and prelease flag
       runs-on: ubuntu-latest
       outputs:
-        is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
+        is_rel_matched: ${{ steps.check-rel-flag.outputs.matched }}   
       steps:
         - run: echo "${{inputs.version}} ${{inputs.prelease}}"
         - name: Checking version ${{inputs.version}} if matching
