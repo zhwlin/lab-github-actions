@@ -3,25 +3,25 @@ run-name: 05-${{ github.actor }} Check if internal or external version release
 
 
 on:
-    workflow_dispatch:
-        inputs:
-            version:
-                description: 'Version no'
-                required: true
-                default: 'v1.0.0'
-                type: string
-            prelease:
-                description: 'Is prelease?'
-                required: false
-                default: false
-                type: boolean                
+  workflow_dispatch:
+      inputs:
+          version:
+              description: 'Version no'
+              required: true
+              default: 'v1.0.0'
+              type: string
+          prelease:
+              description: 'Is prelease?'
+              required: false
+              default: false
+              type: boolean                
 
 jobs:
     check-if-release-version:
       name: Check if release with version and prelease flag
       runs-on: ubuntu-lastest
-      outputs:
-        is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
+      # outputs:
+      #   is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
       steps:
         - name: Checking version ${{inputs.version}} if matching
           uses: actions-ecosystem/action-regex-match@v2
@@ -29,6 +29,9 @@ jobs:
           with:
             text: ${{ inputs.version }}
             regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+
+        - run: echo "version match flag=${{steps.match-rel-version.outputs.match}}"
+
         #
         # - id: check-rel-flag
         #   name: Check Release flag
