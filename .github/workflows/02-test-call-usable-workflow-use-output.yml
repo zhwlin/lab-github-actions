@@ -1,6 +1,6 @@
 name: 🍳Test call a reusable workflow and use its outputs ✈
 run-name: Test call a reusable workflow and use its outputs
-on: [push]
+on: [push, pull_request]
 
 jobs:
   job1:

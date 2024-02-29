@@ -1,23 +1,9 @@
 
 name: Test runs directive
 run-name: ${{ github.actor }} run '🏍'
-on: [push]
-
+on: [push, pull_request]
 
 # runs:
 #  using: './.github/actions/random'
  
 jobs:
-  Reuse-my-action:
-    runs-on: ubuntu-latest
-    steps: 
-        # This step checks out a copy of your repository.
-        - name: My first step - check out repository
-          uses: actions/checkout@v4
-
-        # This step references the directory that contains the action.      
-        - name: Using randmom action
-          id: rand
-          uses:  './.github/actions/random'
-        - name: Print random string
-          run: echo "Random===>>>${{steps.rand.outputs.random-number}}"

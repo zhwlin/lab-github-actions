@@ -1,6 +1,6 @@
 name: 🍕View event json
 run-name: View event json
-on: [push]
+on: [push, pull_request]
 
 jobs:
     print_context:
