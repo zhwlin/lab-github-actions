@@ -30,14 +30,14 @@ jobs:
             text: ${{ inputs.version }}
             regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
         #
-        - id: check-rel-flag
-          name: Check Release flag
-          run: |
-            if [[ !${{inputs.prelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
-              echo "matched=true" >> $GITHUB_OUTPUT
-            else
-              echo "matched=false" >> $GITHUB_OUTPUT 
-            fi
+        # - id: check-rel-flag
+        #   name: Check Release flag
+        #   run: |
+        #     if [[ !${{inputs.prelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+        #       echo "matched=true" >> $GITHUB_OUTPUT
+        #     else
+        #       echo "matched=false" >> $GITHUB_OUTPUT 
+        #     fi
     # deploy-to-external-repository:
     #   name: 🍿Deploy to external repository
     #   runs-on: ubuntu-lastest
