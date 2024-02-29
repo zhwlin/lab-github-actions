@@ -23,14 +23,15 @@ jobs:
       # outputs:
       #   is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
       steps:
-        - name: Checking version ${{inputs.version}} if matching
-          uses: actions-ecosystem/action-regex-match@v2
-          id: match-rel-version
-          with:
-            text: ${{ inputs.version }}
-            regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+        - run: echo "hello"
+        # - name: Checking version ${{inputs.version}} if matching
+        #   uses: actions-ecosystem/action-regex-match@v2
+        #   id: match-rel-version
+        #   with:
+        #     text: ${{ inputs.version }}
+        #     regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
 
-        - run: echo "version match flag=${{steps.match-rel-version.outputs.match}}"
+        # - run: echo "version match flag=${{steps.match-rel-version.outputs.match}}"
 
         #
         # - id: check-rel-flag
