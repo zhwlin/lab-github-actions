@@ -1,9 +1,20 @@
-name: Check if internal or external version release
+name: Dispatch Check if internal or external version release
 run-name: 05-${{ github.actor }} Check if internal or external version release
 
-on: 
-  release:
-    types: [published]
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version no'
+                required: true
+                default: 'v1.0.0'
+                type: string
+            prelease:
+                description: 'Is prelease?'
+                required: false
+                default: false
+                type: boolean                
 
 jobs:
     check-if-release-version:
@@ -12,17 +23,17 @@ jobs:
       outputs:
         is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
       steps:
-        - name: Checking version ${{github.ref_name}} if matching
+        - name: Checking version ${{inputs.version}} if matching
           uses: actions-ecosystem/action-regex-match@v2
           id: match-rel-version
           with:
-            text: ${{ github.ref_name }}
+            text: ${{ inputs.version }}
             regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
         #
         - id: check-rel-flag
           name: Check Release flag
           run: |
-            if [[ !${{github.event.release.prerelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+            if [[ !${{inputs.prelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
               echo "matched=true" >> $GITHUB_OUTPUT
             else
               echo "matched=false" >> $GITHUB_OUTPUT 
@@ -33,7 +44,7 @@ jobs:
       needs: check-if-release-version
       if: ${{needs.check-if-release-version.outputs.is_rel_matched}}
       steps:
-         - run: echo "Publish to external with version ${{github.ref_name}}"
+         - run: echo "Publish to external with version ${{inputs.prelease}}"
 
     deploy-to-internal-repository:
       name: 🍚Deploy to internal repository
@@ -41,4 +52,4 @@ jobs:
       needs: check-if-release-version
       if: ${{ ! needs.check-if-release-version.outputs.is_rel_matched }}
       steps:
-         - run: echo "Publish to internal with version ${{github.ref_name}}"
+         - run: echo "Publish to internal with version ${{inputs.prelease}}"
