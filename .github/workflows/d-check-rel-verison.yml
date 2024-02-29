@@ -38,10 +38,12 @@ jobs:
           run: |
             if [[ !${{inputs.prelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
               echo "matched=true" >> $GITHUB_OUTPUT
+              echo "### Release ###"
             else
               echo "matched=false" >> $GITHUB_OUTPUT 
+              echo ">>>Not release<<<"
             fi
-            echo $GITHUB_OUTPUT
+            cat $GITHUB_OUTPUT
     
     deploy-to-external-repository:
       name: 🍿Deploy to external repository
