@@ -58,7 +58,7 @@ jobs:
     if_is_matched:
       runs-on: ubuntu-latest
       needs: check
-      if: ${{needs.check.outputs.matched}}
+      if: ${{needs.check.outputs.matched == "true"}}
       steps:
         - env:
             MATCH: ${{needs.check.outputs.matched}}
