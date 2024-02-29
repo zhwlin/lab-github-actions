@@ -2,7 +2,6 @@ name: Publish release event demo
 run-name: 03-${{ github.actor }} publish release version on ${{github.ref}}
 
 on: 
-  # [release]
   release:
     types: [published]
 
@@ -25,7 +24,7 @@ jobs:
         run: echo "#### Snapshot..."
 
   check_if_release_version:
-    name: Check if release with version and prelease flag
+    name: Check if release with version ${{github.ref_name}} and prelease flag ${{github.event.release.prerelease}}
     runs-on: ubuntu-latest
     outputs:
       matched: ${{ steps.check-rel-flag.outputs.matched }}   
