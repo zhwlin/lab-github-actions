@@ -1,4 +1,5 @@
 name: 🍕View event json
+run-name: View event json
 on: [push]
 
 jobs:
