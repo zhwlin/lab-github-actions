@@ -5,12 +5,12 @@ run-name: 05-${{ github.actor }} Check if internal or external version release
 on:
   workflow_dispatch:
       inputs:
-          version:
+          ver:
               description: 'Version no'
               required: true
               default: 'v1.0.0'
               type: string
-          prelease:
+          prelease_flag:
               description: 'Is prelease?'
               required: false
               default: false
@@ -23,7 +23,7 @@ jobs:
       # outputs:
       #   is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
       steps:
-        - run: echo "hello"
+        - run: echo "${{inputs.ver}} ${{inputs.prelease_flag}}"
         # - name: Checking version ${{inputs.version}} if matching
         #   uses: actions-ecosystem/action-regex-match@v2
         #   id: match-rel-version
