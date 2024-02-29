@@ -1,5 +1,5 @@
 name: Test usable workflow and action
-run-name: ${{ github.actor }} testing usable workflow and action 🚀
+run-name: 00-${{ github.actor }} testing usable workflow and action 🚀
 on: [push, pull_request]
 
 

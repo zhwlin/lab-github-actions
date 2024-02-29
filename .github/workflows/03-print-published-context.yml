@@ -1,5 +1,5 @@
-name: Print github context list
-# run-name: ${{ github.actor }} is print github context list on ${{github.ref}} on release
+name: Publish release event demo
+run-name: 03-${{ github.actor }} publish release version on ${{github.ref}}
 
 on: 
   # [release]
