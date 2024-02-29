@@ -16,7 +16,7 @@ on:
           type: boolean                
 
 jobs:
-    check_if_release_version:
+    check:
       name: Check if release with version and prelease flag
       runs-on: ubuntu-latest
       outputs:
@@ -48,25 +48,25 @@ jobs:
     print_output_json:
       name: ${{github.actor}} shows output json
       runs-on: ubuntu-latest
-      needs: check_if_release_version
+      needs: check
       steps:
         - env:
-            EVENT_CONTEXT: ${{ toJSON(needs.check_if_release_version) }}
+            EVENT_CONTEXT: ${{ toJSON(needs.check) }}
           run: |
             echo $EVENT_CONTEXT  
 
     deploy-to-external-repository:
-      name: 🍿Deploy to external repository with release version
+      name: 📢Deploy to external repository with release version
       runs-on: ubuntu-lastest
-      needs: check_if_release_version
-      if: ${{needs.check_if_release_version.outputs.is_rel_matched}}
+      needs: check
+      if: ${{needs.check.outputs.is_rel_matched}}
       steps:
          - run: echo "Publish to external with version ${{inputs.prelease}}"
 
     deploy-to-internal-repository:
-      name: 🍚Deploy to internal repository with snapshot version
+      name: 🥽Deploy to internal repository with snapshot version
       runs-on: ubuntu-lastest
-      needs: check_if_release_version
-      if: ${{ ! needs.check_if_release_version.outputs.is_rel_matched }}
+      needs: check
+      if: ${{ ! needs.check.outputs.is_rel_matched }}
       steps:
          - run: echo "Publish to internal with version ${{inputs.prelease}}"
