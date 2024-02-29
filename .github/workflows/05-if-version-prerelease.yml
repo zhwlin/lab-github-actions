@@ -39,6 +39,6 @@ jobs:
       name: 🍚Deploy to internal repository
       runs-on: ubuntu-lastest
       needs: check-if-release-version
-      if: ! needs.check-if-release-version.outputs.is_rel_matched
+      if: ${{ ! needs.check-if-release-version.outputs.is_rel_matched }}
       steps:
          - run: echo "Publish to internal with version ${{github.ref_name}}"
