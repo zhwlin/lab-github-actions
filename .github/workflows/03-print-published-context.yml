@@ -39,7 +39,7 @@ jobs:
       - id: check-rel-flag
         name: Check Release flag
         run: |
-          if [[ !${{github.event.release.prerelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+          if [[ ${{github.event.release.prerelease}} == "false" && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
             echo "matched=true" >> $GITHUB_OUTPUT
             echo "### Release ###"
           else
