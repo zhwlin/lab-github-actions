@@ -1,0 +1,44 @@
+name: Check if internal or external version release
+run-name: 05-${{ github.actor }} Check if internal or external version release
+
+on: 
+  release:
+    types: [published]
+
+jobs:
+    check-if-release-version:
+      name: Check if release with version and prelease flag
+      runs-on: ubuntu-lastest
+      outputs:
+        is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
+      steps:
+        - name: Checking version ${{github.ref_name}} if matching
+          uses: actions-ecosystem/action-regex-match@v2
+          id: match-rel-version
+          with:
+            text: ${{ github.ref_name }}
+            regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+        #
+        - id: check-rel-flag
+          name: Check Release flag
+          run: |
+            if [[ !${{github.event.release.prerelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+              echo "matched=true" >> $GITHUB_OUTPUT
+            else
+              echo "matched=true" >> $GITHUB_OUTPUT 
+            fi
+    deploy-to-external-repository:
+      name: 🍿Deploy to external repository
+      runs-on: ubuntu-lastest
+      needs: check-if-release-version
+      if: ${{needs.check-if-release-version.outputs.is_rel_matched}}
+      steps:
+         - run: echo "Publish to external with version ${{github.ref_name}}"
+
+    deploy-to-internal-repository:
+      name: 🍚Deploy to internal repository
+      runs-on: ubuntu-lastest
+      needs: check-if-release-version
+      if: ! ${{needs.check-if-release-version.outputs.is_rel_matched}}
+      steps:
+         - run: echo "Publish to internal with version ${{github.ref_name}}"
