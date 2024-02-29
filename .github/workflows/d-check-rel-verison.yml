@@ -60,28 +60,24 @@ jobs:
       needs: check
       if: ${{needs.check.outputs.matched == 'true'}}
       steps:
-        - env:
-            MATCH: ${{needs.check.outputs.matched}}
-          run: echo "$MATCH ${{needs.check.outputs.matched}}"
+          - run: echo "matched ${{needs.check.outputs.matched}}"
 
     dis_matched:
       runs-on: ubuntu-latest
       needs: check
       if: ${{ needs.check.outputs.matched == 'false'}}
       steps:
-        - env:
-            MATCH: ${{needs.check.outputs.matched}}
-          run: echo "dismatch $MATCH ${{needs.check.outputs.matched}}"
+        - run: echo "dismatch $MATCH ${{needs.check.outputs.matched}}"
 
-    deploy-to-external-repository:
+    deploy_to_external_repository:
       needs: check
       name: 📢Deploy to external repository with release version
       runs-on: ubuntu-lastest
-      if: ${{needs.check.outputs.matched == 'true'}}
+      if: ${{ needs.check.outputs.matched == 'true'}}
       steps:
-         - run: echo "Publish to external with version ${{inputs.prelease}} - ${{needs.check.outputs.matched}}"
+         - run: echo "Publish to external with version"
 
-    deploy-to-internal-repository:
+    deploy_to_internal_repository:
       needs: check
       name: 🥽Deploy to internal repository with snapshot version
       runs-on: ubuntu-lastest
