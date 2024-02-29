@@ -1,0 +1,14 @@
+name: Test usable workflow
+run-name: ${{ github.actor }} testing usable workflow 🚀
+on: [push]
+
+
+jobs:
+    call-workflow-passing-data:
+      uses: ./.github/workflows/c-reusable-workflow.yml
+      with:
+        config-path: .github/labeler.yml
+         #   secrets:
+        #     envPAT: "testmE"
+      secrets:
+         token: "test"

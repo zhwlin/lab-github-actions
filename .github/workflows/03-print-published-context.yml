@@ -1,0 +1,80 @@
+name: Print github context list
+# run-name: ${{ github.actor }} is print github context list on ${{github.ref}} on release
+
+on: 
+  # [release]
+  release:
+    types: [published]
+
+jobs:
+  Print-Published-All-Context:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "github.token:->[${{github.token}}]"
+          echo "github.job:->[${{github.job}}]"
+          echo "github.ref:->[${{github.ref}}]"
+          echo "github.sha:->[${{github.sha}}]"
+          echo "github.repository:->[${{github.repository}}]"
+          echo "github.repository_owner:->[${{github.repository_owner}}]"
+          echo "github.repositoryUrl:->[${{github.repositoryUrl}}]"
+          echo "github.run_id:->[${{github.run_id}}]"
+          echo "github.run_number:->[${{github.run_number}}]"
+          echo "github.retention_days:->[${{github.retention_days}}]"
+          echo "github.run_attempt:->[${{github.run_attempt}}]"
+          echo "github.actor:->[${{github.actor}}]"
+          echo "github.workflow:->[${{github.workflow}}]"
+          echo "github.head_ref:->[${{github.head_ref}}]"
+          echo "github.base_ref:->[${{github.base_ref}}]"
+          echo "github.event_name:->[${{github.event_name}}]"
+          echo "github.event.action :->[${{github.event.action }}]"     
+          echo "github.event.release.prerelease :->[${{github.event.release.prerelease}}]"     
+          echo "github.server_url:->[${{github.server_url}}]"
+          echo "github.api_url:->[${{github.api_url}}]"
+          echo "github.graphql_url:->[${{github.graphql_url}}]"
+          echo "github.ref_name:->[${{github.ref_name}}]"
+          echo "github.ref_protected:->[${{github.ref_protected}}]"
+          echo "github.ref_type:->[${{github.ref_type}}]"
+          echo "github.secret_source:->[${{github.secret_source}}]"
+          echo "github.workspace:->[${{github.workspace}}]"
+          echo "github.action:->[${{github.action}}]"
+          echo "github.event_path:->[${{github.event_path}}]"
+          echo "github.action_repository:->[${{github.action_repository}}]"
+          echo "github.action_ref:->[${{github.action_ref}}]"
+          echo "github.path:->[${{github.path}}]"
+          echo "github.env:->[${{github.env}}]"
+      # - run: |
+      #     if [[ ${{github.event.release.prerelease}} == true ] &&  ! "${{github.ref_name}}" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
+      #        echo "Yes, prelease!!!"
+      #     else 
+      #        echo "No, it's release~~~"
+      #     fi
+
+  Check-Release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking version ${{github.ref_name}} if matching
+        uses: actions-ecosystem/action-regex-match@v2
+        id: match-rel-version
+        with:
+          text: ${{ github.ref_name }}
+          regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$'
+      - name: Deploy Release version ${{github.ref_name}}
+        if: ${{ !github.event.release.prerelease && steps.match-rel-version.outputs.match != '' }}
+        run: echo "--->Release..."
+      - name: Deploy Snapshot version ${{github.ref_name}}
+        if: ${{ !(!github.event.release.prerelease && steps.match-rel-version.outputs.match != '') }}
+        run: echo "#### Snapshot..."
+
+  # Release-Version:
+  #   if: ${{ github.event.release.prerelease && github.ref_name =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo ">>>>> Releasing....."
+
+  # Snapshot-Version:
+  #   if: ${{ !(github.event.release.prerelease && github.ref_name =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$) }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo ">>>>> Releasing....."
+     
