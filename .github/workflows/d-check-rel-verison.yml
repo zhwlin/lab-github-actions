@@ -38,18 +38,18 @@ jobs:
             else
               echo "matched=false" >> $GITHUB_OUTPUT 
             fi
-    deploy-to-external-repository:
-      name: 🍿Deploy to external repository
-      runs-on: ubuntu-lastest
-      needs: check-if-release-version
-      if: ${{needs.check-if-release-version.outputs.is_rel_matched}}
-      steps:
-         - run: echo "Publish to external with version ${{inputs.prelease}}"
+    # deploy-to-external-repository:
+    #   name: 🍿Deploy to external repository
+    #   runs-on: ubuntu-lastest
+    #   needs: check-if-release-version
+    #   if: ${{needs.check-if-release-version.outputs.is_rel_matched}}
+    #   steps:
+    #      - run: echo "Publish to external with version ${{inputs.prelease}}"
 
-    deploy-to-internal-repository:
-      name: 🍚Deploy to internal repository
-      runs-on: ubuntu-lastest
-      needs: check-if-release-version
-      if: ${{ ! needs.check-if-release-version.outputs.is_rel_matched }}
-      steps:
-         - run: echo "Publish to internal with version ${{inputs.prelease}}"
+    # deploy-to-internal-repository:
+    #   name: 🍚Deploy to internal repository
+    #   runs-on: ubuntu-lastest
+    #   needs: check-if-release-version
+    #   if: ${{ ! needs.check-if-release-version.outputs.is_rel_matched }}
+    #   steps:
+    #      - run: echo "Publish to internal with version ${{inputs.prelease}}"
