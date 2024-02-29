@@ -41,6 +41,7 @@ jobs:
             else
               echo "matched=false" >> $GITHUB_OUTPUT 
             fi
+            echo $GITHUB_OUTPUT
     
     deploy-to-external-repository:
       name: 🍿Deploy to external repository
