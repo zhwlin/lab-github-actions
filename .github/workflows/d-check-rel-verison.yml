@@ -45,6 +45,16 @@ jobs:
             fi
             cat $GITHUB_OUTPUT
     
+    print_output_json:
+      name: ${{github.actor}} shows output json
+      runs-on: ubuntu-latest
+      needs: check-if-release-version
+      steps:
+        - env:
+            EVENT_CONTEXT: ${{ toJSON(needs.check-if-release-version.outputs) }}
+          run: |
+            echo $EVENT_CONTEXT  
+
     deploy-to-external-repository:
       name: 🍿Deploy to external repository
       runs-on: ubuntu-lastest
