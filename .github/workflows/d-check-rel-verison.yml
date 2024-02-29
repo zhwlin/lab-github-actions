@@ -56,7 +56,7 @@ jobs:
             echo $EVENT_CONTEXT  
 
     deploy-to-external-repository:
-      name: 🍿Deploy to external repository
+      name: 🍿Deploy to external repository with release version
       runs-on: ubuntu-lastest
       needs: check_if_release_version
       if: ${{needs.check_if_release_version.outputs.is_rel_matched}}
@@ -64,7 +64,7 @@ jobs:
          - run: echo "Publish to external with version ${{inputs.prelease}}"
 
     deploy-to-internal-repository:
-      name: 🍚Deploy to internal repository
+      name: 🍚Deploy to internal repository with snapshot version
       runs-on: ubuntu-lastest
       needs: check_if_release_version
       if: ${{ ! needs.check_if_release_version.outputs.is_rel_matched }}
