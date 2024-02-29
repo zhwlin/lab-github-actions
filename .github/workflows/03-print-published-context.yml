@@ -24,15 +24,45 @@ jobs:
         if: ${{ !(!github.event.release.prerelease && steps.match-rel-version.outputs.match != '') }}
         run: echo "#### Snapshot..."
 
-  # Release-Version:
-  #   if: ${{ github.event.release.prerelease && github.ref_name =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: echo ">>>>> Releasing....."
+  check_if_release_version:
+    name: Check if release with version and prelease flag
+    runs-on: ubuntu-latest
+    outputs:
+      matched: ${{ steps.check-rel-flag.outputs.matched }}   
+    steps:
+      - name: Checking version ${{github.ref_name}} if matching
+        uses: actions-ecosystem/action-regex-match@v2
+        id: match-rel-version
+        with:
+          text: ${{ github.ref_name }}
+          regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$'
+      #
+      - id: check-rel-flag
+        name: Check Release flag
+        run: |
+          if [[ !${{github.event.release.prerelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+            echo "matched=true" >> $GITHUB_OUTPUT
+            echo "### Release ###"
+          else
+            echo "matched=false" >> $GITHUB_OUTPUT 
+            echo ">>>Not release<<<"
+          fi
+          cat $GITHUB_OUTPUT
 
-  # Snapshot-Version:
-  #   if: ${{ !(github.event.release.prerelease && github.ref_name =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$) }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - run: echo ">>>>> Releasing....."
+  deploy_to_external_repository:
+    name: 🎉Deploy to external repository with release version🚀
+    runs-on: ubuntu-latest
+    needs: check_if_release_version
+    if: ${{ needs.check_if_release_version.outputs.matched }}
+    steps:
+        - run: echo "Publish to external with version with release versoin"
+
+  deploy_to_internal_repository:
+    runs-on: ubuntu-latest
+    needs: check_if_release_version
+    name: 🎬Deploy to internal repository with snapshot version⏰
+    if: ${{ ! needs.check_if_release_version.outputs.matched }}
+    steps:
+        - run: echo "Publish to internal with snapshot version "
+      
      
