@@ -20,7 +20,7 @@ jobs:
       with:
         distribution: corretto
         java-version: 21
-        cache: 'gradle'
+        # cache: 'gradle'
         # cache-dependency-path: | # optional
         #   app/*.gradle*
         #   app/**/gradle-wrapper.properties        
@@ -31,6 +31,7 @@ jobs:
       with:
         dependency-graph: generate-and-submit
         # add-job-summary: 'on-failure'
+        cache-read-only: ${{ github.ref != 'refs/heads/main' }}
     - name: Print gradle version ${{ steps.setup-gradle.outputs.gradle-version }}
       run: echo "The release-candidate version was ${{ steps.setup-gradle.outputs.gradle-version }}"
     - name: List files @${{matrix.os}}
