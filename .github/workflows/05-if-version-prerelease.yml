@@ -29,7 +29,7 @@ jobs:
             fi
     deploy-to-external-repository:
       name: 🍿Deploy to external repository
-      runs-on: ubuntu-lastest
+      runs-on: ubuntu-latest
       needs: check-if-release-version
       if: ${{needs.check-if-release-version.outputs.is_rel_matched}}
       steps:
@@ -37,7 +37,7 @@ jobs:
 
     deploy-to-internal-repository:
       name: 🍚Deploy to internal repository
-      runs-on: ubuntu-lastest
+      runs-on: ubuntu-latest
       needs: check-if-release-version
       if: ${{ ! needs.check-if-release-version.outputs.is_rel_matched }}
       steps:
