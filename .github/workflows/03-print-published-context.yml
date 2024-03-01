@@ -40,10 +40,10 @@ jobs:
           regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
 
       - name: Deploy Release version ${{github.ref_name}}
-        if: ${{ github.event.release.prerelease != "true" && steps.match-rel-version.outputs.match != '' }}
+        if: ${{ github.event.release.prerelease != 'true' && steps.match-rel-version.outputs.match != '' }}
         run: echo "--->Release..."
       - name: Deploy Snapshot version ${{github.ref_name}}
-        if: ${{ !(github.event.release.prerelease != "true" && steps.match-rel-version.outputs.match != '') }}
+        if: ${{ !(github.event.release.prerelease != 'true' && steps.match-rel-version.outputs.match != '') }}
         run: echo "#### Snapshot..."
 
   check_if_release_version:
