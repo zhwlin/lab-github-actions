@@ -11,11 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checking version ${{github.ref_name}} if matching
-        uses: actions-ecosystem/action-regex-match@v2
         id: match-rel-version
+        uses: actions-ecosystem/action-regex-match@v2
         with:
           text: ${{ github.ref_name }}
           regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$'
+
+
       - name: Deploy Release version ${{github.ref_name}}
         if: ${{ !github.event.release.prerelease && steps.match-rel-version.outputs.match != '' }}
         run: echo "--->Release..."
@@ -30,16 +32,22 @@ jobs:
       matched: ${{ steps.check-rel-flag.outputs.matched }}   
     steps:
       - name: Checking version ${{github.ref_name}} if matching
-        uses: actions-ecosystem/action-regex-match@v2
         id: match-rel-version
-        with:
-          text: ${{ github.ref_name }}
-          regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$'
+        run: |
+            check="${{github.ref_name}}"
+            check=${check,,}
+            if [[ "$check" == *"snapshot"* ]]; then
+              echo "matched=false" >> $GITHUB_OUTPUT 
+            elif [[ "$check" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
+              echo "match=true" >> $GITHUB_OUTPUT 
+            else  
+              echo "match=false" >> $GITHUB_OUTPUT 
+            fi     
       #
       - id: check-rel-flag
         name: Check Release flag
         run: |
-          if [[ ${{github.event.release.prerelease}} == "false" && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+          if [[ ${{github.event.release.prerelease}} == "false" && "${{steps.match-rel-version.outputs.match}}" == "true" ]]; then
             echo "matched=true" >> $GITHUB_OUTPUT
             echo "### Release ###"
           else
