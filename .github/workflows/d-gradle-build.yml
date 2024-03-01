@@ -38,4 +38,4 @@ jobs:
       if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
       run: ls -an
     - name: Execute Gradle build
-      run: gradle build -s -i  # just test build configuration
+      run: gradle build -s -i --build-cache --parallel  # just test build configuration
