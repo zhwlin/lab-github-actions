@@ -22,16 +22,16 @@ jobs:
         - id: check-rel-flag
           name: Check Release flag
           run: |
-            if [[ !${{github.event.release.prerelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+            if [[ "${{github.event.release.prerelease}}" != "true" && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
               echo "matched=true" >> $GITHUB_OUTPUT
             else
               echo "matched=false" >> $GITHUB_OUTPUT 
             fi
     deploy-to-external-repository:
       name: 🍿Deploy to external repository
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-latest  
       needs: check-if-release-version
-      if: ${{needs.check-if-release-version.outputs.is_rel_matched}}
+      if: ${{needs.check-if-release-version.outputs.is_rel_matched == 'true'}}
       steps:
          - run: echo "Publish to external with version ${{github.ref_name}}"
 
@@ -39,6 +39,6 @@ jobs:
       name: 🍚Deploy to internal repository
       runs-on: ubuntu-latest
       needs: check-if-release-version
-      if: ${{ ! needs.check-if-release-version.outputs.is_rel_matched }}
+      if: ${{ needs.check-if-release-version.outputs.is_rel_matched != 'true' }}
       steps:
          - run: echo "Publish to internal with version ${{github.ref_name}}"

@@ -37,14 +37,13 @@ jobs:
         uses: actions-ecosystem/action-regex-match@v2
         with:
           text: ${{ github.ref_name }}
-          regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$'
-
+          regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
 
       - name: Deploy Release version ${{github.ref_name}}
-        if: ${{ !github.event.release.prerelease && steps.match-rel-version.outputs.match != '' }}
+        if: ${{ github.event.release.prerelease != "true" && steps.match-rel-version.outputs.match != '' }}
         run: echo "--->Release..."
       - name: Deploy Snapshot version ${{github.ref_name}}
-        if: ${{ !(!github.event.release.prerelease && steps.match-rel-version.outputs.match != '') }}
+        if: ${{ !(github.event.release.prerelease != "true" && steps.match-rel-version.outputs.match != '') }}
         run: echo "#### Snapshot..."
 
   check_if_release_version:
@@ -53,28 +52,18 @@ jobs:
     outputs:
       matched: ${{ steps.check-rel-flag.outputs.matched }}   
     steps:
-      - name: Checking version ${{github.ref_name}} if matching
-        id: match-rel-version
-        run: |
-            check="${{github.ref_name}}"
-            check=${check,,}
-            if [[ "$check" == *"snapshot"* ]]; then
-              echo "matched=false" >> $GITHUB_OUTPUT 
-            elif [[ "$check" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
-              echo "match=true" >> $GITHUB_OUTPUT 
-            else  
-              echo "match=false" >> $GITHUB_OUTPUT 
-            fi     
-      #
       - id: check-rel-flag
         name: Check Release flag
         run: |
-          if [[ ${{github.event.release.prerelease}} == "false" && "${{steps.match-rel-version.outputs.match}}" == "true" ]]; then
+          check="${{github.ref_name}}"
+          check=${check,,}
+          if [[ ${{github.event.release.prerelease}} == "false" && "$check" != *"snapshot"* && "$check" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
             echo "matched=true" >> $GITHUB_OUTPUT
-            echo "### Release ###"
+            echo "# Release :rocket: $check" >> $GITHUB_STEP_SUMMARY
+
           else
             echo "matched=false" >> $GITHUB_OUTPUT 
-            echo ">>>Not release<<<"
+            echo "# Snapshot :clock: $check" >> $GITHUB_STEP_SUMMARY
           fi
           cat $GITHUB_OUTPUT
 
@@ -84,7 +73,7 @@ jobs:
     needs: check_if_release_version
     if: ${{ needs.check_if_release_version.outputs.matched == 'true' }}
     steps:
-        - run: echo "Publish to external with version with release versoin"
+        - run: echo "## Publish to external with version with release version" >> $GITHUB_STEP_SUMMARY
 
   deploy_to_internal_repository:
     runs-on: ubuntu-latest
@@ -92,6 +81,6 @@ jobs:
     name: 🎬Snapshot version will be deployed to internal repository⏰
     if: ${{ needs.check_if_release_version.outputs.matched == 'false' }}
     steps:
-        - run: echo "Publish to internal with snapshot version "
+        - run: echo "## Publish to internal with snapshot version" >> $GITHUB_STEP_SUMMARY
       
      
