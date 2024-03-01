@@ -30,7 +30,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
       with:
         dependency-graph: generate-and-submit
-        add-job-summary: 'on-failure'
+        # add-job-summary: 'on-failure'
     - name: Print gradle version ${{ steps.setup-gradle.outputs.gradle-version }}
       run: echo "The release-candidate version was ${{ steps.setup-gradle.outputs.gradle-version }}"
     - name: List files @${{matrix.os}}
