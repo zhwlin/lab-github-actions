@@ -24,10 +24,9 @@ jobs:
           # Publish by gradle
           if [[ $releaseMatched == "true" ]]; then
             echo "Release version will be deploy to external <$NEXUS_UPLOAD_REPOS_URL> using $NEXUS_UPLOAD_REPOS_USER"; 
-            ./gradlew publishToExternalRepository -x test --parallel
+
           else
             echo "Snapshot version will be deploy to inner <$NEXUS_UPLOAD_REPOS_URL> using $NEXUS_UPLOAD_REPOS_USER"; 
-            ./gradlew publishToInnerRepository -DIS_DEV=true -DIS_SNAPSHOT=true -x test --parallel
           fi     
 
   Check-Release:
