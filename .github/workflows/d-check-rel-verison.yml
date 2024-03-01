@@ -24,11 +24,19 @@ jobs:
       steps:
         - run: echo "${{inputs.version}} ${{inputs.prelease}}"
         - name: Checking version ${{inputs.version}} if matching
-          uses: actions-ecosystem/action-regex-match@v2
           id: match-rel-version
-          with:
-            text: ${{ inputs.version }}
-            regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+          # uses: actions-ecosystem/action-regex-match@v2
+          # with:
+          #   text: ${{ inputs.version }}
+          #   regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+          run: |
+             if [[ "${${{inputs.version}},,}" == *"snapshot"* ]]; then
+                echo "matched=false" >> $GITHUB_OUTPUT 
+             elif [[ "${{inputs.version}}" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
+                echo "match=true" >> $GITHUB_OUTPUT 
+             else  
+                echo "match=false" >> $GITHUB_OUTPUT 
+             fi
 
         - run: echo "version match flag=${{steps.match-rel-version.outputs.match}}"
 
@@ -36,7 +44,7 @@ jobs:
         - id: check-rel-flag
           name: Check Release flag
           run: |
-            if [[ !${{inputs.prelease}} && "${{steps.match-rel-version.outputs.match}}" != "" ]]; then
+            if [[ "${{inputs.prelease}}" == "false" && "${{steps.match-rel-version.outputs.match}}" == "true" ]]; then
               echo "matched=true" >> $GITHUB_OUTPUT
               echo "### Release ###"
             else
