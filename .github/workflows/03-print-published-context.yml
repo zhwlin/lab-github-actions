@@ -34,16 +34,24 @@ jobs:
     steps:
       - name: Checking version ${{github.ref_name}} if matching
         id: match-rel-version
-        uses: actions-ecosystem/action-regex-match@v2
-        with:
-          text: ${{ github.ref_name }}
-          regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+        run: |
+          check="${{ github.ref_name }}"
+          check=${check,,}
+          match="false"
+          if [[ $check != *"snapshot"* $check =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
+              match="true"
+          fi
+          echo "match=$match">>GITHUB_OUTPUT
+        # uses: actions-ecosystem/action-regex-match@v2
+        # with:
+        #   text: ${{ github.ref_name }}
+        #   regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
 
       - name: Deploy Release version ${{github.ref_name}}
-        if: ${{ github.event.release.prerelease != 'true' && steps.match-rel-version.outputs.match != '' }}
+        if: ${{ github.event.release.prerelease != 'true' && steps.match-rel-version.outputs.match == 'true' }}
         run: echo "--->Release..."
       - name: Deploy Snapshot version ${{github.ref_name}}
-        if: ${{ !(github.event.release.prerelease != 'true' && steps.match-rel-version.outputs.match != '') }}
+        if: ${{ !(github.event.release.prerelease != 'true' && steps.match-rel-version.outputs.match == 'true') }}
         run: echo "#### Snapshot..."
 
   check_if_release_version:
