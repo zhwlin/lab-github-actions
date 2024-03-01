@@ -6,6 +6,29 @@ on:
     types: [published]
 
 jobs:
+  Test-Version:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          NEXUS_UPLOAD_REPOS_URL="http://test-nexus"
+          checkVersion="${{github.ref_name}}"
+          checkVersion=${checkVersion,,}
+          prereleaseFlag="${{github.event.release.prerelease}}"
+          releaseMatched="false"
+
+          # Release version rule: prerelease=false and not contains 'snapshot'(ignore case) and match {v}x.x.x{-yyyy}
+          if [[ $prereleaseFlag == "false" && "$checkVersion" != *"snapshot"* && "$checkVersion" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
+            releaseMatched="true"
+          fi
+          
+          # Publish by gradle
+          if [[ $releaseMatched == "true" ]]; then
+            echo "Release version will be deploy to external <$NEXUS_UPLOAD_REPOS_URL> using $NEXUS_UPLOAD_REPOS_USER"; 
+            ./gradlew publishToExternalRepository -x test --parallel
+          else
+            echo "Snapshot version will be deploy to inner <$NEXUS_UPLOAD_REPOS_URL> using $NEXUS_UPLOAD_REPOS_USER"; 
+            ./gradlew publishToInnerRepository -DIS_DEV=true -DIS_SNAPSHOT=true -x test --parallel
+          fi     
 
   Check-Release:
     runs-on: ubuntu-latest
