@@ -8,7 +8,7 @@ on:
 jobs:
     check-if-release-version:
       name: Check if release with version and prelease flag
-      runs-on: ubuntu-lastest
+      runs-on: ubuntu-latest
       outputs:
         is_rel_matched: ${{ steps.match-rel-version.outputs.matched }}   
       steps:
