@@ -12,7 +12,9 @@ jobs:
        run: cat $GITHUB_ENV
 
      - name: Add new env variable
-       run: echo "Hello=me" >> $GITHUB_ENV
+       run: |
+         echo "Hello=me" >> $GITHUB_ENV
+         echo ">>>>-->>${Hello}"
     
      - name: Check created
        run: echo "Hello=<$Hello>"
