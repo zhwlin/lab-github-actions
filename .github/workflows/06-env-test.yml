@@ -1,0 +1,18 @@
+name: Env variables operations test
+
+on:
+  workflow_call:
+
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Print all env variables
+       run: cat $GITHUB_ENV
+
+     - name: Add new env variable
+       run: echo "Hello=me" >> $GITHUB_ENV
+    
+     - name: Check created
+       run: echo "Hello=<$Hello>"
