@@ -1,10 +1,11 @@
-name: Test usable workflow
-run-name: ${{ github.actor }} testing usable workflow 🚀
-on: [push]
+name: Test usable workflow and action
+run-name: 00-${{ github.actor }} testing usable workflow and action 🚀
+on: [push, pull_request]
 
 
 jobs:
-    call-workflow-passing-data:
+    Call-workflow-passing-data:
+      name: Call workflow passing data
       uses: ./.github/workflows/c-reusable-workflow.yml
       with:
         config-path: .github/labeler.yml
@@ -12,3 +13,18 @@ jobs:
         #     envPAT: "testmE"
       secrets:
          token: "test"
+
+    Reuse-my-action:
+      name: Reuse action
+      runs-on: ubuntu-latest
+      steps: 
+          # This step checks out a copy of your repository.
+          - name: My first step - check out repository
+            uses: actions/checkout@v4
+
+          # This step references the directory that contains the action.      
+          - name: Using randmom action
+            id: rand
+            uses:  './.github/actions/random'
+          - name: Print random string
+            run: echo "Random===>>>${{steps.rand.outputs.random-number}}"         

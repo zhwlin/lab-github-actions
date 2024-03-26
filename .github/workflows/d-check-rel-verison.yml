@@ -1,0 +1,96 @@
+# name: Dispatch Check if internal or external version release
+# run-name: 05-${{ github.actor }} Check if internal or external version release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version no'
+        required: true
+        default: 'v1.0.0'
+        type: string
+      prelease:
+          description: 'Is prelease?'
+          required: false
+          default: false
+          type: boolean                
+
+jobs:
+    Check-If-Release-Version:
+      name: Check if release with version and prelease flag
+      runs-on: ubuntu-latest
+      outputs:
+        matched: ${{ steps.check-rel-flag.outputs.matched }}   
+      steps:
+        - run: echo "${{inputs.version}} ${{inputs.prelease}}"
+        - name: Checking version ${{inputs.version}} if matching
+          id: match-rel-version
+          # uses: actions-ecosystem/action-regex-match@v2
+          # with:
+          #   text: ${{ inputs.version }}
+          #   regex: '^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$' 
+          run: |
+             check="${{inputs.version}}"
+             check=${check,,}
+             if [[ "$check" == *"snapshot"* ]]; then
+                echo "matched=false" >> $GITHUB_OUTPUT 
+             elif [[ "${{inputs.version}}" =~ ^v?[0-9]+(\.[0-9]+){0,2}(-[a-zA-Z]+[0-9]*)?$ ]]; then
+                echo "match=true" >> $GITHUB_OUTPUT 
+             else  
+                echo "match=false" >> $GITHUB_OUTPUT 
+             fi
+
+        - run: echo "version match flag=${{steps.match-rel-version.outputs.match}}"
+
+        #
+        - id: check-rel-flag
+          name: Check Release flag
+          run: |
+            if [[ "${{inputs.prelease}}" == "false" && "${{steps.match-rel-version.outputs.match}}" == "true" ]]; then
+              echo "matched=true" >> $GITHUB_OUTPUT
+              echo "### Release ###"
+            else
+              echo "matched=false" >> $GITHUB_OUTPUT 
+              echo ">>>Not release<<<"
+            fi
+            cat $GITHUB_OUTPUT
+    
+    print_output_json:
+      name: ${{github.actor}} shows output json
+      runs-on: ubuntu-latest
+      needs: Check-If-Release-Version
+      steps:
+        - env:
+            EVENT_CONTEXT: ${{ toJSON(needs.Check-If-Release-Version) }}
+          run: |
+            echo $EVENT_CONTEXT  
+
+    matched:
+      runs-on: ubuntu-latest
+      needs: Check-If-Release-Version
+      if: ${{needs.Check-If-Release-Version.outputs.matched == 'true'}}
+      steps:
+          - run: echo "matched ${{needs.Check-If-Release-Version.outputs.matched}}"
+
+    dis_matched:
+      runs-on: ubuntu-latest
+      needs: Check-If-Release-Version
+      if: ${{ needs.Check-If-Release-Version.outputs.matched == 'false'}}
+      steps:
+        - run: echo "dismatch $MATCH ${{needs.Check-If-Release-Version.outputs.matched}}"
+
+    deploy_to_external_repository:
+      name: 🎉Deploy to external repository with release version🚀
+      runs-on: ubuntu-latest
+      needs: Check-If-Release-Version
+      if: ${{  needs.Check-If-Release-Version.outputs.matched == 'true'  }}
+      steps:
+         - run: echo "Publish to external with version with release versoin"
+
+    deploy_to_internal_repository:
+      runs-on: ubuntu-latest
+      needs: Check-If-Release-Version
+      name: 🎬Deploy to internal repository with snapshot version⏰
+      if: ${{  needs.Check-If-Release-Version.outputs.matched == 'false'  }}
+      steps:
+         - run: echo "Publish to internal with snapshot version "
