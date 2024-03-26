@@ -1,7 +1,7 @@
 name: Env variables operations test
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 
 jobs:
